@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# WARNING: This assumes that the first line of stdin contains a match!
+version=$(sed -r 's,^usr/lib/modules/([^/]+).*$,\1,;q')
+
+exec /bin/kernel-install add "${version}" /boot/vmlinuz-linux

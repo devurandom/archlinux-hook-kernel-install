@@ -1,0 +1,14 @@
+[Trigger]
+Type = File
+Operation = Install
+Operation = Upgrade
+Target = usr/lib/modules/*/
+
+[Action]
+Description = Updating boot loader entries
+Depends = bash
+Depends = sed
+Depends = systemd
+NeedsTargets = true
+When = PostTransaction
+Exec = /usr/local/bin/kernel-install-latest
