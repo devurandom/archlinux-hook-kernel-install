@@ -1,6 +1,41 @@
 #!/bin/bash
 
-# WARNING: This assumes that the first line of stdin contains a match!
-version=$(sed -r 's,^usr/lib/modules/([^/]+).*$,\1,;q')
+ROOT=/
 
-exec /bin/kernel-install add "${version}" /boot/vmlinuz-linux
+version() {
+	local v="$1"
+	[[ "${v}" = usr/lib/modules/* ]] || return # Skip unless we have a chance of extracting the version
+	v="${v##usr/lib/modules/}"
+	v="${v%%/*}"
+	[[ "${v}" = [0-9]* ]] || return # Skip if failed to extract a proper version
+	echo "${v}"
+}
+
+files=$(cat)
+
+for f in ${files} ; do
+	v=$(version "${f}")
+	[ $? -eq 0 ] && [[ "${v}" ]] || continue # Skip if failed to extract version
+	if [ -e "${ROOT}${f}" ] ; then # This file is being installed
+		if [[ -z "${add_version}" ]] ; then
+			add_version="${v}"
+			[[ "${remove_version}" ]] && break # Nothing left to do
+		fi
+	else # This file is being removed
+		if [[ -z "${remove_version}" ]] ; then
+			remove_version="${v}"
+			[[ "${add_version}" ]] && break # Nothing left to do
+		fi
+	fi
+done
+
+echo "Removing: ${remove_version:-<none>}"
+echo "Adding: ${add_version:-<none>}"
+
+if [[ "${remove_version}" ]] ; then
+	/bin/kernel-install remove "${remove_version}" || exit
+fi
+
+if [[ "${add_version}" ]] ; then
+	/bin/kernel-install add "${add_version}" /boot/vmlinuz-linux || exit
+fi
