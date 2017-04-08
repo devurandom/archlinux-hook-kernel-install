@@ -1,3 +1,15 @@
+PREFIX := /usr/local
+BINDIR := $(PREFIX)/bin
+SYSCONFDIR := /etc
+HOOKDIR := $(SYSCONFDIR)/pacman.d/hooks
+
+INSTALL := install
+
+PROGRAMS := kernel-install-latest
+HOOKS := 99-kernel-install.hook
+
 install:
-	install --mode=0755 kernel-install-latest /usr/local/bin
-	install --mode=0644 99-kernel-install.hook /etc/pacman.d/hooks
+	$(INSTALL) -d $(BINDIR)
+	$(INSTALL) --mode=0755 $(PROGRAMS) $(BINDIR)/
+	$(INSTALL) -d $(HOOKDIR)
+	$(INSTALL) --mode=0644 $(HOOKS) $(HOOKDIR)/
