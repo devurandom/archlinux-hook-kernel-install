@@ -5,3 +5,9 @@ A pair of hook + script to automatically setup systemd-boot / gummiboot loader e
 # Install
 
 Run `sudo make install`.
+
+Have a look at the variables at the top of the Makefile for configuration options.
+
+# Uninstall
+
+Run `sudo make uninstall`.
