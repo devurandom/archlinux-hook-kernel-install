@@ -13,3 +13,7 @@ install:
 	$(INSTALL) --mode=0755 $(PROGRAMS) $(BINDIR)/
 	$(INSTALL) -d $(HOOKDIR)
 	$(INSTALL) --mode=0644 $(HOOKS) $(HOOKDIR)/
+
+uninstall:
+	$(RM) $(foreach prog,$(PROGRAMS),$(BINDIR)/$(prog))
+	$(RM) $(foreach hook,$(HOOKS),$(HOOKDIR)/$(hook))
